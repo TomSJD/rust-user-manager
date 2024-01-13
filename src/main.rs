@@ -22,7 +22,7 @@ fn main() {
         let input: String = read_user_input();
 
         match input.as_str() {
-            "1" => users.push(add_user()),
+            "1" => add_user(&mut users),
             "2" => display_all_users(&users),
             "3" => running = false,
             _ => println!("Not a valid option"),
@@ -30,15 +30,21 @@ fn main() {
     }
 }
 
-fn add_user() -> User {
+fn add_user(users: &mut Vec<User>) {
     println!("Enter a username.");
-    let username: String = read_user_input();
+    let username: String = 'username_loop: loop {
+        let input: String = read_user_input();
+        for user in &mut users.iter() {
+            if &user.username.to_ascii_lowercase() == &input.to_ascii_lowercase() {
+                println!("Username already exists!");
+                continue 'username_loop;
+            }
+        }
+        break input
+    };
     println!("Enter an email.");
     let email: String = read_user_input();
-    User {
-        username,
-        email,
-    }
+    users.push(User { username, email });
 }
 
 fn display_all_users(users: &Vec<User>) {
